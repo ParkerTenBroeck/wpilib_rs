@@ -1,0 +1,107 @@
+{
+    "local": [
+        {
+            "group_id": "edu.wpi.first.apriltag",
+            "artifact_id": "apriltag-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.cameraserver",
+            "artifact_id": "cameraserver-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.cscore",
+            "artifact_id": "cscore-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.hal",
+            "artifact_id": "hal-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.halsim",
+            "artifact_id": "halsim_ds_socket",
+            "version": "2023.2.1",
+            "no_headers": true,
+            "no_roborio_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.halsim",
+            "artifact_id": "halsim_gui",
+            "version": "2023.2.1",
+            "no_headers": true,
+            "no_roborio_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.halsim",
+            "artifact_id": "halsim_ws_client",
+            "version": "2023.2.1",
+            "no_headers": true,
+            "no_roborio_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.halsim",
+            "artifact_id": "halsim_ws_server",
+            "version": "2023.2.1",
+            "no_headers": true,
+            "no_roborio_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.ni-libraries",
+            "artifact_id": "chipobject",
+            "version": "2023.3.0",
+            "no_native_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.ni-libraries",
+            "artifact_id": "netcomm",
+            "version": "2023.3.0",
+            "no_native_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.ni-libraries",
+            "artifact_id": "runtime",
+            "version": "2023.3.0",
+            "no_headers": true,
+            "no_native_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.ni-libraries",
+            "artifact_id": "visa",
+            "version": "2023.3.0",
+            "no_native_libs": true
+        },
+        {
+            "group_id": "edu.wpi.first.ntcore",
+            "artifact_id": "ntcore-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.wpilibc",
+            "artifact_id": "wpilibc-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.wpilibNewCommands",
+            "artifact_id": "wpilibNewCommands-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.wpimath",
+            "artifact_id": "wpimath-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.wpinet",
+            "artifact_id": "wpinet-cpp",
+            "version": "2023.2.1"
+        },
+        {
+            "group_id": "edu.wpi.first.wpiutil",
+            "artifact_id": "wpiutil-cpp",
+            "version": "2023.2.1"
+        }
+    ]
+}

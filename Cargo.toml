@@ -1,0 +1,10 @@
+
+[workspace]
+members = [
+	"wpilib_rs",
+	"build_tools",
+	"build_utils",
+	"robot_code",
+]
+
+resolver = "2"

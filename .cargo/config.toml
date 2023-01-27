@@ -1,0 +1,51 @@
+[unstable]
+configurable-env = true
+
+
+[env]
+# NOTE ~ will be replaced with home directory within code
+# remove the ~ to use absolute paths (will be OS spesific)
+WPILIB_PATH = "~/wpilib"
+LOCAL_MAVEN_PATH = "~/wpilib/2023/maven"
+
+LINUX_CPP_LIB_PATH = "/usr/include/c++/11,/usr/include/x86_64-linux-gnu/c++/11,/usr/include/c++/11/backward,/usr/lib/gcc/x86_64-linux-gnu/11/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include"
+WINDOWS_CPP_LIB_PATH = ""
+MACOS_CPP_LIB_PATH = ""
+
+BINDINGS_INCLUDE_PATH = { value = "wpilib/include", relative = true }
+BINDINGS_LIBRARY_PATH = { value = "wpilib/lib", relative = true }
+FRC_TEAM_NUMBER = "1114"
+TARGET_DIR = { value = "target", relative = true }
+MAVEN_DEPS = { value = "maven-deps.json", relative = true }
+
+TARGET_BINARY = "robot_code"
+
+
+[alias]
+build_native = "run --release  --package build_tools -- build --native"
+build_roborio = "run --release  --package build_tools -- build --roborio"
+deploy = "run --release --package build_tools -- deploy"
+
+
+[target.'cfg(true)']
+rustflags = [
+
+]
+
+[target.arm-unknown-linux-gnueabi]
+rustflags = [
+ "-C", "target-cpu=cortex-a9",
+
+  #Link time optimization (we want speed dont we LOL)
+  "-C", "lto=yes",
+  "-C" ,"embed-bitcode=yes",
+  # "-C", "prefer-dynamic",
+
+  "-C", "soft-float=yes",
+
+  #Specify we want to use the ld flavor (mmmm yummy)
+  "-C", "linker-flavor=gcc",
+
+  #Use the provided link script
+  #"-C", "link-args=-T/home/may/wpilib/2023/roborio/arm-nilrt-linux-gnueabi/lib/ldscripts/armelf_linux_eabi.x",
+]

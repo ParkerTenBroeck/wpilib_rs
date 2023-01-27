@@ -1,0 +1,15 @@
+[package]
+edition = "2021"
+authors = [ "Parker TenBroeck" ]
+name = "wpilib_rs"
+version = "0.1.0"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.63.0"
+build_utils = { path = "../build_utils" }
+zip = "*"
+
+[features]
+export_bindings = []
