@@ -39,7 +39,7 @@ impl RobotBase {
     }
 
     pub fn start_robot<T: RobotBaseTrait>() {
-        // we probably want backtrace support on
+        // We probably want backtrace support on
         std::env::set_var("RUST_BACKTRACE", "1");
 
         let robot = T::new(Self::new());
