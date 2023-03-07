@@ -1,4 +1,4 @@
-use crate::bindings::frc::XboxController as NativeXboxController;
+use crate::bindings::frc_XboxController as NativeXboxController;
 
 pub enum Port {
     Port0 = 0,

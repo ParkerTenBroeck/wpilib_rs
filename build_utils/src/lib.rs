@@ -13,6 +13,15 @@ pub enum Target {
     Roborio,
 }
 
+impl Target {
+    pub fn as_lower_str(&self) -> &'static str {
+        match self {
+            Target::Native => "native",
+            Target::Roborio => "roborio",
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Profile {
     Release,

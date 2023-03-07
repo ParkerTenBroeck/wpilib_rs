@@ -33,9 +33,7 @@ pub trait TimedRobotTrait: Send + 'static + Sized {
     fn test_exit(&mut self, _context: &TimedRobot<Self>) {}
 
     fn time_overrun(&mut self, _context: &TimedRobot<Self>, timings: WatchdogOverrun) {
-        unsafe {
-            crate::ReportHalError!(crate::frc::errors::Errors::Error, "{}", timings);
-        }
+        crate::ReportHalError!(crate::frc::errors::Errors::Error, "{}", timings);
     }
 
     fn start_robot() {
@@ -126,7 +124,7 @@ impl<T: TimedRobotTrait> TimedRobot<T> {
     ) {
         let mut guard = self.callbacks.lock().unwrap();
 
-        let start_time = unsafe { bindings::frc::RobotController::GetFPGATime() };
+        let start_time = unsafe { bindings::frc_RobotController_GetFPGATime() };
         let expiration_time = Time::from_micros(start_time) + period;
 
         guard.push(Callback {
@@ -145,12 +143,12 @@ impl<T: TimedRobotTrait> TimedRobot<T> {
 
         watchdog.add_epoch("DriverStation::RefreshData");
         unsafe {
-            bindings::frc::DriverStation::RefreshData();
+            bindings::frc_DriverStation_RefreshData();
         }
         watchdog.end_epoch();
 
         let mode = unsafe {
-            let control = bindings::frc::DSControlWord::new();
+            let control = bindings::frc_DSControlWord::new();
             if control.IsDisabled() {
                 Mode::Disabled
             } else if control.IsAutonomous() {
@@ -238,12 +236,16 @@ impl<T: TimedRobotTrait> TimedRobot<T> {
 
         unsafe {
             watchdog.add_epoch("SmartDashBoard::UpdateValues");
-            bindings::frc::SmartDashboard::UpdateValues();
+            bindings::frc_SmartDashboard::UpdateValues();
+            watchdog.add_epoch("LiveWindow::UpdateValues");
+            bindings::frc_LiveWindow::UpdateValues();
+            watchdog.add_epoch("Shuffleboard::Update");
+            bindings::frc_Shuffleboard::Update();
 
             if lock.nt_flush {
                 watchdog.add_epoch("NetworkTables::FlushLocal");
                 //nt::NetworkTableInstance::GetDefault().FlushLocal();
-                bindings::nt::FlushLocal(bindings::nt::GetDefaultInstance());
+                bindings::nt_FlushLocal(bindings::nt_GetDefaultInstance());
             }
         }
 
@@ -267,12 +269,12 @@ impl<T: TimedRobotTrait> RobotBaseTrait for TimedRobot<T> {
 
             bindings::HAL_SetNotifierName(
                 notifier,
-                std::mem::transmute(b"TimedRobot\0".as_ptr()),
+                b"TimedRobot\0".as_ptr().cast(),
                 (&mut status) as *mut i32,
             );
             bindings::HAL_Report(
-                bindings::HALUsageReporting::tResourceType_kResourceType_Framework,
-                bindings::HALUsageReporting::tInstances_kFramework_Timed,
+                bindings::HALUsageReporting_tResourceType_kResourceType_Framework,
+                bindings::HALUsageReporting_tInstances_kFramework_Timed,
                 0,
                 std::ptr::null(),
             );

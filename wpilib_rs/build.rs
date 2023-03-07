@@ -5,7 +5,12 @@ use build_utils::{BuildConfig, Profile, Target};
 extern crate bindgen;
 
 fn main() {
-    println!("cargo:rerun-if-changed=wrapper.h");
+    // if we dont specify to regenerate the bindings
+    // return
+    // if cfg!(not(feature = "regen_bindings")){
+    //     return;
+    // }
+    // println!("cargo:rerun-if-changed=wrapper.h");
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
@@ -25,11 +30,11 @@ fn main() {
         },
     };
 
-    let file_name = format!("bindings_{}.rs", config.full_target_name());
+    let rust_binings_file_name = format!("bindings_{}.rs", config.target.as_lower_str());
 
-    let out_file = out_path.join(file_name);
+    let rust_bindings = out_path.join(rust_binings_file_name);
 
-    if !out_file.exists() {
+    if !rust_bindings.exists() {
         let mut bindings = bindgen::Builder::default()
             .default_non_copy_union_style(bindgen::NonCopyUnionStyle::ManuallyDrop)
             .header("wrapper.hpp")
@@ -54,7 +59,7 @@ fn main() {
                     .unwrap_or_else(|_| panic!("{paths} env not defined"))
                     .split(',')
                 {
-                    bindings = bindings.clang_arg(format!("-isystem{path}"))
+                    bindings = bindings.clang_arg(format!("-isystem{path}"));
                 }
             }
             Target::Roborio => {
@@ -107,6 +112,7 @@ fn main() {
             .clang_arg(format!("-I{path}/ntcore-cpp"))
             .clang_arg(format!("-I{path}/wpilibc-cpp"))
             .clang_arg(format!("-I{path}/wpimath-cpp"))
+            .clang_arg(format!("-I{path}/cscore-cpp"))
             .clang_arg(format!("-I{path}/wpiutil-cpp/fmt"))
             .clang_arg(format!("-I{path}/wpiutil-cpp"));
 
@@ -119,6 +125,10 @@ fn main() {
             .allowlist_type("hal.*")
             .allowlist_type("nt.*")
             .allowlist_type("NT.*")
+            .opaque_type(".*json_pointer")
+            .opaque_type(".*SendableChooser")
+            // .c_naming(true)
+            // .blocklist_type(".*json_pointer.*")
             // fixes strange mystical errors beyond me
             // .opaque_type(".*basic_ostream_sentry.*")
             // .opaque_type(".*basic_istream_sentry_traits_type.*")
@@ -127,6 +137,8 @@ fn main() {
             // .opaque_type(".*vector__Temporary_value__Storage.*")
             // .opaque_type(".*rep.*")
             .derive_debug(true)
+            // .clang_arg("-fno-gnu-inline-asm")
+            // .clang_arg("-msoft-float")
             // .generate_inline_functions(true)
             .allowlist_function("HAL.*")
             .allowlist_function("frc.*")
@@ -134,14 +146,14 @@ fn main() {
             .allowlist_function("NT.*")
             .allowlist_function("std.*")
             .allowlist_function("GetWPILibVersion")
-            .enable_cxx_namespaces()
+            // .enable_cxx_namespaces()
             .vtable_generation(true)
             .parse_callbacks(Box::new(bindgen::CargoCallbacks))
             .generate()
             .expect("Unable to generate bindings!");
 
         bindings
-            .write_to_file(out_file)
+            .write_to_file(rust_bindings)
             .expect("Couldn't write bindings!");
     }
 }

@@ -70,18 +70,25 @@ macro_rules! ReportHalErrorBackTrace {
         let mut backtrace = std::backtrace::Backtrace::force_capture().to_string();
         backtrace.push('\0');
         let status = $status as i32;
-        $crate::bindings::HAL_SendError(i32::from(status < 0), status, 0,
-            "\0".as_ptr().cast(), location.as_ptr().cast(), backtrace.as_ptr().cast(),1);
+        #[allow(unused_unsafe)]
+        unsafe{
+            $crate::frc::errors::hal_send_error_impl(status, false,
+                "\0".as_ptr().cast(), location.as_ptr().cast(), backtrace.as_ptr().cast(),false);
+        }
     }};
     ($status:expr, $($arg:tt)*) => {{
         let mut details = std::format!($($arg)*);
+        details.push(' ');
         details.push('\0');
         let location = std::format!("{}:{}:{}\0", file!(), line!(), column!());
         let mut backtrace = std::backtrace::Backtrace::force_capture().to_string();
         backtrace.push('\0');
         let status = $status as i32;
-        $crate::bindings::HAL_SendError(i32::from(status < 0), status, 0,
-        details.as_ptr().cast(), location.as_ptr().cast(), backtrace.as_ptr().cast(),1);
+        #[allow(unused_unsafe)]
+        unsafe{
+                $crate::frc::errors::hal_send_error_impl(status, false,
+            details.as_ptr().cast(), location.as_ptr().cast(), backtrace.as_ptr().cast(),false);
+        }
     }};
 }
 
@@ -90,17 +97,46 @@ macro_rules! ReportHalError {
     ($status:expr) => {{
         let location = std::format!("{}:{}:{}\0", file!(), line!(), column!());
         let status = $status as i32;
-        $crate::bindings::HAL_SendError(i32::from(status < 0), status, 0,
-            "\0".as_ptr().cast(), location.as_ptr().cast(), "\0".as_ptr().cast(),1);
+        #[allow(unused_unsafe)]
+        unsafe{
+            $crate::frc::errors::hal_send_error_impl(status, false,
+                "\0".as_ptr().cast(), location.as_ptr().cast(), "\0".as_ptr().cast(), false);
+        }
     }};
     ($status:expr, $($arg:tt)*) => {{
         let mut details = std::format!($($arg)*);
+        details.push(' ');
         details.push('\0');
         let location = std::format!("{}:{}:{}\0", file!(), line!(), column!());
         let status = $status as i32;
-        $crate::bindings::HAL_SendError(i32::from(status < 0), status, 0,
-        details.as_ptr().cast(), location.as_ptr().cast(), "\0".as_ptr().cast(),1);
+        #[allow(unused_unsafe)]
+        unsafe{
+            $crate::frc::errors::hal_send_error_impl(status, false,
+                details.as_ptr().cast(), location.as_ptr().cast(), "\0".as_ptr().cast(),false);
+        }
     }};
+}
+
+/// # Safety
+///
+/// all const i8 pointers must point to a valid c string (that is \0 terminated)
+pub unsafe fn hal_send_error_impl(
+    error_code: i32,
+    is_lv_code: bool,
+    details: *const i8,
+    location: *const i8,
+    callstack: *const i8,
+    print_msg: bool,
+) {
+    crate::bindings::HAL_SendError(
+        i32::from(error_code < 0),
+        error_code,
+        i32::from(is_lv_code),
+        details.cast(),
+        location.cast(),
+        callstack.cast(),
+        i32::from(print_msg),
+    );
 }
 
 #[macro_export]

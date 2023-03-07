@@ -9,4 +9,4 @@ edition = "2021"
 [dependencies]
 llvm-tools = { version = "0.1.1" }
 build_utils = { path = "../build_utils" }
-ssh = "*"
+ssh2 = "*"

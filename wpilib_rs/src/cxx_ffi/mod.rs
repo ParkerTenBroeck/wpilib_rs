@@ -75,7 +75,7 @@ impl CxxString {
     /// Discard the original array immediatly as calling this again with the same value will allow for a double free
     ///
     #[inline(never)]
-    pub unsafe fn as_native(string: *const crate::bindings::std::string) -> String {
+    pub unsafe fn as_native(string: *const crate::bindings::std_string) -> String {
         let self_ref: *const Self = std::mem::transmute(string);
         if (*self_ref).short.ptr as *const u8 != (*self_ref).short.chars.as_ptr() {
             String::from_raw_parts(
@@ -110,11 +110,11 @@ impl Debug for CxxString {
 }
 
 pub trait ToStringView {
-    fn to_string_view(self) -> crate::bindings::std::string_view;
+    fn to_string_view(self) -> crate::bindings::std_string_view;
 }
 
 impl<'a> ToStringView for &'a str {
-    fn to_string_view(self) -> crate::bindings::std::string_view {
+    fn to_string_view(self) -> crate::bindings::std_string_view {
         [
             self.as_bytes().len() as PtrUInt,
             self.as_bytes().as_ptr() as PtrUInt,

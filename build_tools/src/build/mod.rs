@@ -26,6 +26,9 @@ pub fn build(config: BuildConfig) {
     }
 
     if target == Target::Roborio {
+        run_cmd.arg("--no-default-features");
+        run_cmd.arg("--features");
+        run_cmd.arg("default_roborio");
         run_cmd.arg("--target").arg(get_target_tripple(target));
     }
 

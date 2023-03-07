@@ -8,7 +8,7 @@ configurable-env = true
 WPILIB_PATH = "~/wpilib"
 LOCAL_MAVEN_PATH = "~/wpilib/2023/maven"
 
-LINUX_CPP_LIB_PATH = "/usr/include/c++/11,/usr/include/x86_64-linux-gnu/c++/11,/usr/include/c++/11/backward,/usr/lib/gcc/x86_64-linux-gnu/11/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include"
+LINUX_CPP_LIB_PATH = "/usr/lib/clang/14/include,/usr/include/c++/11,/usr/include/x86_64-linux-gnu/c++/11,/usr/include/c++/11/backward,/usr/lib/gcc/x86_64-linux-gnu/11/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include"
 WINDOWS_CPP_LIB_PATH = ""
 MACOS_CPP_LIB_PATH = ""
 
@@ -16,9 +16,11 @@ BINDINGS_INCLUDE_PATH = { value = "wpilib/include", relative = true }
 BINDINGS_LIBRARY_PATH = { value = "wpilib/lib", relative = true }
 FRC_TEAM_NUMBER = "1114"
 TARGET_DIR = { value = "target", relative = true }
-MAVEN_DEPS = { value = "maven-deps.json", relative = true }
+MAVEN_DEPS = { value = "maven-deps.json5", relative = true }
 
 TARGET_BINARY = "robot_code"
+
+GENERATE_BINDINGS_DURING_BUILD = "true"
 
 
 [alias]

@@ -12,4 +12,6 @@ build_utils = { path = "../build_utils" }
 zip = "*"
 
 [features]
-export_bindings = []
+default = [ "simulation" ]
+default_roborio = []
+simulation = []

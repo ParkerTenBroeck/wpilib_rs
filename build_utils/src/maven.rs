@@ -15,6 +15,7 @@ pub struct LocalArtifacts {
     pub no_native_libs: bool,
     #[serde(default)]
     pub no_roborio_libs: bool,
+    // pub test: (String, String)
 }
 
 impl LocalArtifacts {
@@ -43,7 +44,7 @@ pub struct MavenRepository {
 pub fn load_deps() -> MavenRepository {
     let path = PathBuf::from_str(std::env::var("MAVEN_DEPS").unwrap().as_str()).unwrap();
     let file = std::fs::read_to_string(path).unwrap();
-    serde_json::from_str(&file).unwrap()
+    json5::from_str(&file).unwrap()
 }
 
 pub fn unpack_headers() {

@@ -5,7 +5,7 @@ use crate::{
     hal,
 };
 
-use crate::bindings::frc::RobotBase as NativeRobotBase;
+use crate::bindings::frc_RobotBase as NativeRobotBase;
 
 pub trait RobotBaseTrait: Sync + Send + std::panic::RefUnwindSafe + 'static {
     fn new(robot: RobotBase) -> Arc<Self>;
@@ -33,7 +33,7 @@ impl RobotBase {
         unsafe {
             Self {
                 thread_id: std::thread::current().id(),
-                robot_base: bindings::frc::RobotBase::new(),
+                robot_base: NativeRobotBase::new(),
             }
         }
     }

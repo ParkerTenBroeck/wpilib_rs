@@ -1,7 +1,8 @@
 
-
 // #include <wpi/json.h>
 // #include <wpi/json_serializer.h>
+
+#define _POSIX_SEM_VALUE_MAX	32767
 
 
 
@@ -127,13 +128,13 @@
 #include <frc/util/Color8Bit.h>
 
 #include <WPILibVersion.h>
-// #include <frc/system/Discretization.h>
-// #include <frc/system/LinearSystem.h>
-// #include <frc/system/LinearSystemLoop.h>
-// #include <frc/system/NumericalIntegration.h>
-// #include <frc/system/NumericalJacobian.h>
+#include <frc/system/Discretization.h>
+#include <frc/system/LinearSystem.h>
+#include <frc/system/LinearSystemLoop.h>
+#include <frc/system/NumericalIntegration.h>
+#include <frc/system/NumericalJacobian.h>
 #include <frc/system/plant/DCMotor.h>
-// #include <frc/system/plant/LinearSystemId.h>
+#include <frc/system/plant/LinearSystemId.h>
 
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/smartdashboard/FieldObject2d.h>
@@ -143,12 +144,15 @@
 #include <frc/smartdashboard/MechanismObject2d.h>
 #include <frc/smartdashboard/MechanismRoot2d.h>
 #include <frc/smartdashboard/SendableBuilderImpl.h>
-// #include <frc/smartdashboard/SendableChooser.h>
-// #include <frc/smartdashboard/SendableChooser.inc>
-// #include <frc/smartdashboard/SendableChooserBase.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SendableChooser.inc>
+#include <frc/smartdashboard/SendableChooserBase.h>
 // these will break it with weird template stuff
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <frc/livewindow/LiveWindow.h>
+
+#include <frc/shuffleboard/Shuffleboard.h>
 
 #include <ntcore.h>
 #include <ntcore_c.h>
@@ -157,46 +161,53 @@
 #include <ntcore_c_types.h>
 #include <ntcore_test.h>
 
-// #include<ntcore/networktables/NetworkTable.h>
-// #include<ntcore/N>
-// #include<networktables/BooleanArrayTopic.h>
-// #include<networktables/IntegerArrayTopic.h>
+#include<networktables/BooleanArrayTopic.h>
+#include<networktables/IntegerArrayTopic.h>
 #include<networktables/NetworkTableValue.h>
-// #include<networktables/BooleanArrayTopic.inc>
-// #include<networktables/IntegerArrayTopic.inc>
-// #include<networktables/NTSendableBuilder.h>
-// #include<networktables/BooleanTopic.h>
-// #include<networktables/IntegerTopic.h>
-// #include<networktables/NTSendable.h>
-// #include<networktables/BooleanTopic.inc>
-// #include<networktables/IntegerTopic.inc>
-// #include<networktables/RawTopic.h>
-// #include<networktables/DoubleArrayTopic.h>
-// #include<networktables/MultiSubscriber.h>
-// #include<networktables/RawTopic.inc>
-// #include<networktables/DoubleArrayTopic.inc>
-// #include<networktables/MultiSubscriber.inc>
-// #include<networktables/StringArrayTopic.h>
-// #include<networktables/DoubleTopic.h>
+#include<networktables/BooleanArrayTopic.inc>
+#include<networktables/IntegerArrayTopic.inc>
+#include<networktables/NTSendableBuilder.h>
+#include<networktables/BooleanTopic.h>
+#include<networktables/IntegerTopic.h>
+#include<networktables/NTSendable.h>
+#include<networktables/BooleanTopic.inc>
+#include<networktables/IntegerTopic.inc>
+#include<networktables/RawTopic.h>
+#include<networktables/DoubleArrayTopic.h>
+#include<networktables/MultiSubscriber.h>
+#include<networktables/RawTopic.inc>
+#include<networktables/DoubleArrayTopic.inc>
+#include<networktables/MultiSubscriber.inc>
+#include<networktables/StringArrayTopic.h>
+#include<networktables/DoubleTopic.h>
 #include<networktables/NetworkTableEntry.h>
-// #include<networktables/StringArrayTopic.inc>
-// #include<networktables/DoubleTopic.inc>
-// #include<networktables/NetworkTableEntry.inc>
-// #include<networktables/StringTopic.h>
-// #include<networktables/FloatArrayTopic.h>
-// #include<networktables/NetworkTable.h>
-// #include<networktables/StringTopic.inc>
-// #include<networktables/FloatArrayTopic.inc>
+#include<networktables/StringArrayTopic.inc>
+#include<networktables/DoubleTopic.inc>
+#include<networktables/NetworkTableEntry.inc>
+#include<networktables/StringTopic.h>
+#include<networktables/FloatArrayTopic.h>
+#include<networktables/NetworkTable.h>
+#include<networktables/StringTopic.inc>
+#include<networktables/FloatArrayTopic.inc>
 #include<networktables/NetworkTableInstance.h>
-// #include<networktables/Topic.h>
-// #include<networktables/FloatTopic.h>
+#include<networktables/Topic.h>
+#include<networktables/FloatTopic.h>
 #include<networktables/NetworkTableInstance.inc>
-// #include<networktables/Topic.inc>
-// #include<networktables/FloatTopic.inc>
-// #include<networktables/NetworkTableListener.h>
-// #include<networktables/UnitTopic.h>
-// #include<networktables/GenericEntry.h>
-// #include<networktables/NetworkTableListener.inc>
-// #include<networktables/UnitTopic.inc>
-// #include<networktables/GenericEntry.inc>
-// #include<networktables/NetworkTableType.h>
+#include<networktables/Topic.inc>
+#include<networktables/FloatTopic.inc>
+#include<networktables/NetworkTableListener.h>
+#include<networktables/UnitTopic.h>
+#include<networktables/GenericEntry.h>
+#include<networktables/NetworkTableListener.inc>
+#include<networktables/UnitTopic.inc>
+#include<networktables/GenericEntry.inc>
+#include<networktables/NetworkTableType.h>
+
+// #include<cameraserver/CameraServer.h>
+// #include<cameraserver/CameraServer.inc>
+// #include<cameraserver/CameraServerShared.h>
+
+
+
+#include <frc/kinematics/SwerveDriveOdometry.h>
+#include <frc/kinematics/SwerveDriveOdometry.inc>
