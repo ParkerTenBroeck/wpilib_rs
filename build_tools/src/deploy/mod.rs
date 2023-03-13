@@ -15,7 +15,7 @@ pub fn deploy(conf: BuildConfig) {
     println!("\nDeploy -> Discover Roborio");
 
     //let tcp = TcpStream::connect(&format!("roboRIO-{}-frc.local", env!("FRC_TEAM_NUMBER")));
-    let tcp = TcpStream::connect("10.11.14.21:22");
+    let tcp = TcpStream::connect("10.11.14.2:22");
     let tcp = tcp.unwrap();
 
     let mut session = Session::new().expect("Failed to open SSH session");

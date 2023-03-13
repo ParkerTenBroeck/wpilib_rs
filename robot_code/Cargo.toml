@@ -5,7 +5,7 @@ name = "robot_code"
 version = "0.1.0"
 
 [dependencies]
-wpilib_rs = { path = "../wpilib_rs", default-features = false}
+wpilib_rs = { path = "../wpilib_rs", default-features = false, features = ["export_bindings"]}
 
 
 [features]
