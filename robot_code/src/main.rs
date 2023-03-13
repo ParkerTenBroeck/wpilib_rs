@@ -21,8 +21,7 @@ impl TimedRobotTrait for MyRobot {
     fn robot_init(_context: &TimedRobot<Self>) -> Self {
         println!("Robot Init");
 
-        let mut pwm = PWM::new(0).unwrap();
-        // pwm.set_config(0.9, 0.8, 0.5, 0.2, 0.1);
+        let pwm = PWM::new(0).unwrap();
 
         Self {
             start: std::time::Instant::now(),
@@ -34,6 +33,10 @@ impl TimedRobotTrait for MyRobot {
         }
     }
 
+    fn teleop_periodic(&mut self, _context: &TimedRobot<Self>) {
+        self.pwm_0.set_speed(self.driver.get_left_y());
+    }
+
     fn robot_periodic(&mut self, _context: &TimedRobot<Self>) {
         // println!("This is very silly :<");
         // wpilib_rs::ReportHalError!(Warnings::Warning, "asdasdlkjasdlkjasd, {}", 12);
@@ -43,7 +46,6 @@ impl TimedRobotTrait for MyRobot {
         // wpilib_rs::bindings::HAL_CAN_SendMessage(messageID, data, dataSize, periodMs, status)
         // wpilib_rs::ReportHalErrorBackTrace!(Errors::Error, "STACK BABY");
 
-        // self.pwm_0.set_speed(0.6);
         // println!("speed: {}", self.pwm_0.get_speed());
 
         let now = std::time::Instant::now();
