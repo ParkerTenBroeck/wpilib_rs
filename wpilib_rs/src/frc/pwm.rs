@@ -1,32 +1,18 @@
+use crate::{hal::HalError, hal_call, hal_call_s};
+
 pub struct PWM {
     handle: i32,
 }
 
-#[derive(Debug)]
-pub struct PWMError {
-    #[allow(unused)]
-    err: i32,
-}
-
 impl PWM {
-    pub fn new(port: u32) -> Result<Self, PWMError> {
+    pub fn new(port: u32) -> Result<Self, HalError> {
         unsafe {
-            let handle = crate::bindings::HAL_GetPort(port as i32);
+            let handle = hal_call!(HAL_GetPort, port as i32);
+            let handle = hal_call_s!(HAL_InitializePWMPort, handle, std::ptr::null())?;
+            hal_call_s!(HAL_SetPWMDisabled, handle)?;
+            hal_call_s!(HAL_SetPWMEliminateDeadband, handle, false as i32)?;
 
-            let mut status = 0;
-            let handle = crate::bindings::HAL_InitializePWMPort(
-                handle,
-                std::ptr::null_mut(),
-                &mut status as *mut i32,
-            );
-            if status != 0 {
-                if status == -1156{
-                    crate::bindings::HAL_GetLastError(&mut status as *mut i32);
-                }
-               Err(PWMError { err: status })
-            } else {
-                Ok(PWM { handle })
-            }
+            Ok(PWM { handle })
         }
     }
 
@@ -39,75 +25,40 @@ impl PWM {
         min: f64,
     ) {
         unsafe {
-            let mut status = 0;
-            crate::bindings::HAL_SetPWMConfig(
+            hal_call_s!(
+                HAL_SetPWMConfig,
                 self.handle,
                 max,
                 deadband_max,
                 center,
                 deadband_min,
-                min,
-                &mut status as &mut i32,
-            );
-            if status != 0 {
-                panic!("Failed to set PWM Config: {status}");
-            }
+                min
+            )
+            .expect("Failed to set PWM config");
         }
     }
 
-    pub fn turn_off(&self){
+    pub fn turn_off(&self) {
         unsafe {
-            let mut status = 0;
-            crate::bindings::HAL_SetPWMDisabled(
-                self.handle,
-                &mut status as &mut i32,
-            );
-            if status != 0 {
-                panic!("Failed to set PWM Config");
-            }
+            hal_call_s!(HAL_SetPWMDisabled, self.handle).expect("Failed to disable PWM port");
         }
     }
 
-    pub fn set_speed(&self, speed: f64){
-        unsafe{
-            let mut status = 0;
-            crate::bindings::HAL_SetPWMSpeed(
-                self.handle,
-                speed,
-                &mut status as &mut i32,
-            );
-            if status != 0 {
-                panic!("Failed to set PWM Speed: {status}");
-            }
+    pub fn set_speed(&self, speed: f64) {
+        unsafe {
+            hal_call_s!(HAL_SetPWMSpeed, self.handle, speed).expect("Failed to set PWM speed");
         }
     }
 
-    pub fn get_speed(&self) -> f64{
-        // crate::bindings::HAL_PWM
-        unsafe{
-            let mut status = 0;
-            let speed = crate::bindings::HAL_GetPWMSpeed(
-                self.handle,
-                &mut status as &mut i32,
-            );
-            if status != 0 {
-                panic!("Failed to set PWM Speed: {status}");
-            }else{
-                speed
-            }
-        }
+    pub fn get_speed(&self) -> f64 {
+        unsafe { hal_call_s!(HAL_GetPWMSpeed, self.handle).expect("Failed to get PWM speed") }
     }
 }
 
-
-impl Drop for PWM{
+impl Drop for PWM {
     fn drop(&mut self) {
-        unsafe{
-            let mut status = 0;
-            crate::bindings::HAL_FreePWMPort(self.handle, &mut status as *mut i32);
-            if status != 0{
-                panic!("{status}");
-            }
+        unsafe {
+            hal_call_s!(HAL_FreePWMPort, self.handle).expect("Failed to free pwm port");
         }
     }
 }

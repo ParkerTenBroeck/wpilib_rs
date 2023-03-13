@@ -1,5 +1,40 @@
 use crate::bindings;
 
+#[derive(Debug)]
+pub struct HalError {
+    pub err: i32,
+}
+
+#[macro_export]
+#[cfg(feature = "export_bindings")]
+macro_rules! hal_call {
+    ($call_name:ident, $($arg:tt)*) => {
+        {
+            $crate::bindings::$call_name($($arg)*)
+        }
+    };
+}
+
+#[macro_export]
+#[cfg(feature = "export_bindings")]
+macro_rules! hal_call_s {
+    ($call_name:ident, $($arg:tt)*) => {
+        {
+            let mut status = 0;
+            let res = $crate::bindings::$call_name($($arg)*, &mut status as *mut i32);
+
+            if status != 0 {
+                if status == -1156{
+                    $crate::bindings::HAL_GetLastError(&mut status as *mut i32);
+                }
+               Err(HalError { err: status })
+            }else{
+                Ok(res)
+            }
+        }
+    };
+}
+
 ///
 /// # Panics
 ///
