@@ -226,7 +226,7 @@ impl<T: TimedRobotTrait> TimedRobot<T> {
             }
             Mode::Test => {
                 watchdog.add_epoch("test_periodic");
-                unsafe { bindings::HAL_ObserveUserProgramTeleop() }
+                unsafe { bindings::HAL_ObserveUserProgramTest() }
                 lock.get_robot(self).test_periodic(self)
             }
         }
